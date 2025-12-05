@@ -1,0 +1,5 @@
+experiment_name:"yield_prediction_v1"
+model_type:"gnn"
+input_months:4
+batch_size:32
+data_path:"./data/raw"
