@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import yaml
+import os
 from sklearn.neighbors import NearestNeighbors
 from sklearn.impute import SimpleImputer
 from scipy import sparse
@@ -12,6 +13,8 @@ with open(config_path) as f:
 
 df_additional = pd.read_csv("../" + config_data["data"]["additional_data"])
 df_train = pd.read_csv("../" + config_data["data"]["train"])
+output_dir = "../" + config_data["data"]["processed_graph"]
+os.makedirs(output_dir, exist_ok=True)
 k = int(config_data["model"]["knn"]["k"])
 E = float(config_data["model"]["knn"]["E"])
 
@@ -44,3 +47,10 @@ mutual_mask = A.astype(bool).multiply(A_transpose.astype(bool))
 A_final = mutual_mask.multiply(A)
 A_final.data = 1.0 / (A_final.data + E)
 A_final.setdiag(1.0 / E)
+
+
+sparse.save_npz(os.path.join(output_dir, "adj_matrix.npz"), A_final)
+np.save(os.path.join(output_dir, "node_features.npz"), df_additional_features)
+np.save(os.path.join(output_dir, "graph_field_id.npy"), df_additional["Field_ID"])
+
+print(f"Files saved to {output_dir}")
