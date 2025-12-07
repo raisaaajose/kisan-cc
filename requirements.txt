@@ -1,3 +1,6 @@
 scikit-learn
 torch
 PyYAML
+scipy
+pandas
+numpy

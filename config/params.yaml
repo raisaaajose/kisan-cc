@@ -3,6 +3,11 @@ model_type: "gnn"
 input_months: 4
 batch_size: 32
 data:
-  data_path: "./data/raw"
-  additional_data: "./data/additional"
+  data_path: "data/raw"
+  additional_data: "data/additional.csv"
+  train: "data/Train.csv"
 
+model:
+  knn:
+    k: 20
+    E: 0.0001
