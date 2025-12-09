@@ -4,3 +4,4 @@ PyYAML
 scipy
 pandas
 numpy
+torch

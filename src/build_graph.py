@@ -19,7 +19,8 @@ k = int(config_data["model"]["knn"]["k"])
 E = float(config_data["model"]["knn"]["E"])
 
 # to find count of fields
-df_additional = df_additional[df_additional["Field_ID"].isin(df_train["Field_ID"])]
+valid_ids = df_train[df_train["Quality"] != 1]["Field_ID"]
+df_additional = df_additional[df_additional["Field_ID"].isin(valid_ids)]
 df_additional = df_additional.drop_duplicates(subset=["Field_ID"], keep="first")
 df_additional = df_additional.reset_index(drop=True)
 df_additional_features = df_additional.drop(columns=["Field_ID"])
@@ -48,6 +49,7 @@ A_final = mutual_mask.multiply(A)
 A_final.data = 1.0 / (A_final.data + E)
 A_final.setdiag(1.0 / E)
 
+# print(A_final.getnnz(axis=1))
 
 sparse.save_npz(os.path.join(output_dir, "adj_matrix.npz"), A_final)
 np.save(os.path.join(output_dir, "node_features.npz"), df_additional_features)

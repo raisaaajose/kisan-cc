@@ -12,3 +12,7 @@ model:
   knn:
     k: 20
     E: 0.0001
+  tcn:
+    epoch: 300
+    dropout: 0.1
+    learn: 0.001
