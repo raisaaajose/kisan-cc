@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as f
 
 
 class Chomp1d(nn.Module):
