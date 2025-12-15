@@ -1,75 +1,84 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, TensorDataset
 import numpy as np
 import yaml
 import pandas as pd
 import os
 
-from src.model.stgnn import STGNN
+from src.models.stgnn import STGNN
 from src.utils import normalize_laplacian
 
 config = yaml.safe_load(open("config/params.yaml"))
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-print(" Loading data..")
-train_data = np.load(config["data"]["train"])
-
-X_train = pd.DataFrame(train_data)[:][:-1]
-y_train = pd.DataFrame(train_data)[:][-1]
-
-tensor_x = torch.Tensor(X_train)
-tensor_y = torch.Tensor(y_train)
-
-train_dataset = TensorDataset(tensor_x, tensor_y)
-train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-
 print("Preparing graph..")
-A_hat = normalize_laplacian(
-    os.path.join(config["config"]["data"]["processed_graph"], "/adj_matrix.npz")
-).to(device)
+adj_path = os.path.join(config["config"]["data"]["processed_graph"], "adj_matrix.npz")
+A_hat = normalize_laplacian(adj_path).to(device)
 
-num_nodes = X_train.shape[1]
-in_channels = X_train.shape[2]
+print("Loading all image data...")
+csv_path = os.path.join(config["config"]["train"], "Train.csv")
+img_dir = "image_arrays_train"
 
+df = pd.read_csv(csv_path)
+df = df[df['Quality'] != 1].reset_index(drop=True)
+
+df = df.sort_values(by="Field_ID")
+
+num_nodes = len(df)
+in_channels = 30
+num_time = 12 
+
+X_all = torch.zeros(1, in_channels, num_nodes, num_time)
+y_all = torch.zeros(1, num_nodes)
+
+print(f"Loading {num_nodes} fields into memory...")
+
+for i, row in df.iterrows():
+    field_id = row['Field_ID']
+    try:
+        img_path = os.path.join(img_dir, f"{field_id}.npy")
+        img = np.load(img_path)
+        
+        feat = np.mean(img, axis=(1, 2)).reshape(12, 30).T
+        
+        X_all[0, :, i, :] = torch.FloatTensor(feat)
+        y_all[0, i] = row['Yield']
+        
+    except FileNotFoundError:
+        print(f"Warning: File for {field_id} not found.")
+
+X_all = X_all.to(device)
+y_all = y_all.to(device)
+
+print("Initializing Model...")
 model = STGNN(
     num_nodes=num_nodes,
     in_channels=in_channels,
-    tcn_hidden=[32, 64],
-    gcn_hidden=64,
+    tcn_hidden=[64, 128],
+    gcn_hidden=128,
     dropout=0.3,
 ).to(device)
 
 criterion = nn.MSELoss()
-optimizer = optim.Adam(model.paramters(), lr=config["model"]["learn"])
+optimizer = optim.Adam(model.parameters(), lr=config["model"]["learn"])
 
 print("Start training..")
 epochs = config["model"]["epoch"]
 
 for epoch in range(epochs):
     model.train()
-    total_loss = 0
+    optimizer.zero_grad()
+    predictions = model(X_all, A_hat)
 
-    for batch_x, batch_y in train_loader:
-        batch_x = batch_x.to(device)
-        batch_y = batch_y.to(device)
+    loss = criterion(predictions.view(-1), y_all.view(-1))
 
-        optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
 
-        predictions = model(batch_x, A_hat)
+    if (epoch + 1) % 10 == 0:
+        rmse = torch.sqrt(loss).item()
+        print(f"Epoch {epoch+1}/{epochs} | Loss: {loss.item():.4f} | RMSE: {rmse:.4f}")
 
-        loss = criterion(predictions, batch_y)
-
-        loss.bakcward()
-        optimizer.step()
-
-        total_loss += loss.item()
-
-    avg_loss = total_loss / len(train_loader)
-    print(
-        f"Epoch {epoch+1}/{epochs} | Loss: {avg_loss:.4f} | RSME {np.sqrt(avg_loss):.4f}"
-    )
-
-torch.save(model.stat_dict(), os.path.join(config["models_saved"], "stgnn_model.pth"))
+torch.save(model.state_dict(), os.path.join(config["models_saved"], "stgnn_model.pth"))
 print("Training complete..")

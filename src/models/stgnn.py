@@ -54,11 +54,12 @@ class STGNN(nn.Module):
         x = x.view(B, N, Hidden, T)
         x = x.permute(0, 2, 1, 3)
 
-        self.gcn(x, A_hat)
+        x = self.gcn(x, A_hat)
+        B, Hidden, N, T = x.shape
 
         x = x.permute(0, 2, 1, 3).contiguous()
         x = x.view(B * N, Hidden, T)
-
+        x = self.tcn_upper(x)
         x = x[:, :, -1]
 
         out = self.regressor(x)
