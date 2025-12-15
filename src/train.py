@@ -6,28 +6,28 @@ import yaml
 import pandas as pd
 import os
 
-from src.models.stgnn import STGNN
-from src.utils import normalize_laplacian
+from models.stgnn import STGNN
+from utils import normalize_laplacian
 
 config = yaml.safe_load(open("config/params.yaml"))
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 print("Preparing graph..")
-adj_path = os.path.join(config["config"]["data"]["processed_graph"], "adj_matrix.npz")
+adj_path = os.path.join(config["data"]["processed_graph"], "adj_matrix.npz")
 A_hat = normalize_laplacian(adj_path).to(device)
 
 print("Loading all image data...")
-csv_path = os.path.join(config["config"]["train"], "Train.csv")
-img_dir = "image_arrays_train"
+csv_path = os.path.join(config["data"]["train"], "Train.csv")
+img_dir = config["data"]["train_img"]
 
 df = pd.read_csv(csv_path)
-df = df[df['Quality'] != 1].reset_index(drop=True)
+df = df[df["Quality"] != 1].reset_index(drop=True)
 
 df = df.sort_values(by="Field_ID")
 
 num_nodes = len(df)
 in_channels = 30
-num_time = 12 
+num_time = 12
 
 X_all = torch.zeros(1, in_channels, num_nodes, num_time)
 y_all = torch.zeros(1, num_nodes)
@@ -35,16 +35,16 @@ y_all = torch.zeros(1, num_nodes)
 print(f"Loading {num_nodes} fields into memory...")
 
 for i, row in df.iterrows():
-    field_id = row['Field_ID']
+    field_id = row["Field_ID"]
     try:
         img_path = os.path.join(img_dir, f"{field_id}.npy")
         img = np.load(img_path)
-        
+
         feat = np.mean(img, axis=(1, 2)).reshape(12, 30).T
-        
+
         X_all[0, :, i, :] = torch.FloatTensor(feat)
-        y_all[0, i] = row['Yield']
-        
+        y_all[0, i] = row["Yield"]
+
     except FileNotFoundError:
         print(f"Warning: File for {field_id} not found.")
 

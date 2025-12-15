@@ -18,7 +18,7 @@ def normalize_laplacian(adj_matrix_path):
     mx = mx.tocoo()
     indices = torch.LongTensor([mx.row, mx.col])
     values = torch.FloatTensor(mx.data)
-    shape = torch.size(mx.shape)
+    shape = torch.Size(mx.shape)
 
     laplacian = torch.sparse.FloatTensor(indices, values, shape).to_dense()
 

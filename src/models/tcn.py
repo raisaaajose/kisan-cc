@@ -26,7 +26,7 @@ class TemporalBlock(nn.Module):
             dilation=dilation,
         )
         self.chomp1 = Chomp1d(padding)
-        self.relu1 = nn.ReLu()
+        self.relu1 = nn.ReLU()
         self.dropout1 = nn.Dropout(dropout)
 
         self.conv2 = nn.Conv1d(
@@ -67,7 +67,7 @@ class TemporalBlock(nn.Module):
     def forward(self, x):
         out = self.net(x)
         res = x if self.downsample is None else self.downsample(x)
-        return self.reLU(out + res)
+        return self.relu(out + res)
 
 
 class CausalTCN(nn.Module):

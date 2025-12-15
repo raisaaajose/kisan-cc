@@ -1,7 +1,6 @@
-scikit-learn
-torch
-PyYAML
-scipy
-pandas
+torch>=2.0.0
 numpy
-torch
+pandas
+scipy
+PyYAML
+scikit-learn

@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
-from src.models.tcn import CausalTCN
-from src.models.gcn import StaticSpectralGCN
+from models.tcn import CausalTCN
+from models.gcn import StaticSpectralGCN
 
 
 class STGNN(nn.Module):
