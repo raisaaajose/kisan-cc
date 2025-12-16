@@ -14,7 +14,7 @@ with open(config_path) as f:
 df_additional = pd.read_csv(config_data["data"]["additional_data"])
 df_train = pd.read_csv(config_data["data"]["train"])
 df_test = pd.read_csv(config_data["data"]["test"])
-output_dir = config_data["data"]["processed_graph"]
+output_dir = config_data["data"]["processed"]
 os.makedirs(output_dir, exist_ok=True)
 k = int(config_data["model"]["knn"]["k"])
 E = float(config_data["model"]["knn"]["E"])

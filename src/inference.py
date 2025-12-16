@@ -14,7 +14,7 @@ def run_inference():
 
     print("--- Starting Inference ---")
 
-    processed_dir = config["data"]["processed_graph"]
+    processed_dir = config["data"]["processed"]
 
     adj_path = os.path.join(processed_dir, "adj_matrix.npz")
     A_hat = normalize_laplacian(adj_path).to(device)

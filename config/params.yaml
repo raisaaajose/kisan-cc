@@ -6,20 +6,20 @@ data:
   additional_data: "data/additional.csv"
   train: "data/Train.csv"
   test: "data/test_field_ids_with_year.csv"
-  processed_graph: "data/processed/"
+  processed: "data/processed/"
   train_img: "data/image_arrays_train"
   test_img: "data/image_arrays_test"
   submission: "data/"
 model:
   learn: 0.001
-  epoch: 1000
+  epoch: 500
+  dropout: 0.1
   knn:
     k: 20
     E: 0.0001
   tcn:
     epoch: 300
-    dropout: 0.1
-    hidden: [64, 128]
+    hidden: [128, 256]
   gcn:
     hidden: 128
 
