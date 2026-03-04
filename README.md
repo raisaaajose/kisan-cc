@@ -80,7 +80,7 @@ Clone the repository and install the required dependencies. It is highly recomme
 
 ```bash
 # Clone the repository
-git clone [https://github.com/raisaaajose/kisan-cc](https://github.com/raisaaajose/kisan-cc)
+git clone https://github.com/raisaaajose/kisan-cc
 cd kisan-cc
 
 # Create and activate a virtual environment 
