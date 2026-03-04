@@ -80,8 +80,8 @@ Clone the repository and install the required dependencies. It is highly recomme
 
 ```bash
 # Clone the repository
-git clone [https://github.com/your-username/your-repo-name.git](https://github.com/your-username/your-repo-name.git)
-cd your-repo-name
+git clone [https://github.com/raisaaajose/kisan-cc](https://github.com/raisaaajose/kisan-cc)
+cd kisan-cc
 
 # Create and activate a virtual environment 
 python3 -m venv venv
