@@ -13,9 +13,9 @@ The experiments are conducted using the [SustainBench Dataset](https://sustainla
 The input data consists of multispectral satellite imagery processed into multi-band histograms. Each county is represented by a $32 \times 32 \times 9$ tensor, where the 9 channels correspond to the MODIS spectral bands.
 
 <div align="center">
-  <img src="data/satellitebands.png" alt="Satellite Bands Visualization" width="600">
+  <img src="data/satellitebands.png" alt="Satellite Bands Visualization" width="400">
   <br><br>
-  <img src="data/satellitebands2.png" alt="Histogram Representation" width="600">
+  <img src="data/satellitebands2.png" alt="Histogram Representation" width="400">
   <p><i>Figure 1: Multispectral satellite imagery bands and their conversion into county-level histograms. Images sourced from the <a href="https://sustainlab-group.github.io/sustainbench/docs/datasets/sdg2/crop_yield.html">SustainBench documentation</a> (Yeh et al., 2021).</i></p>
 </div>
 
@@ -83,7 +83,7 @@ Clone the repository and install the required dependencies. It is highly recomme
 git clone [https://github.com/your-username/your-repo-name.git](https://github.com/your-username/your-repo-name.git)
 cd your-repo-name
 
-# Create and activate a virtual environment (optional but recommended)
+# Create and activate a virtual environment 
 python3 -m venv venv
 source venv/bin/activate  # On Windows, use: venv\Scripts\activate
 
