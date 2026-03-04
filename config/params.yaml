@@ -1,26 +1,19 @@
-experiment_name: "yield_prediction_v1"
-model_type: "gnn"
-input_months: 4
-batch_size: 32
-data:
-  additional_data: "data/additional.csv"
-  train: "data/Train.csv"
-  test: "data/test_field_ids_with_year.csv"
-  processed: "data/processed/"
-  train_img: "data/image_arrays_train"
-  test_img: "data/image_arrays_test"
-  submission: "data/"
-model:
-  learn: 0.001
-  epoch: 500
-  dropout: 0.1
-  knn:
-    k: 20
-    E: 0.0001
-  tcn:
-    epoch: 300
-    hidden: [128, 256]
-  gcn:
-    hidden: 128
+# Environment
+TASK: "DOMESTIC_BRA"
+DATA_PATH: "/data/brazil"
+MODEL_PATH: "models_saved/best_gat.pth"
 
-models_saved: "models_saved/"
+# Model Architecture
+SPATIAL_CONTEXT: 12
+ENCODER_FEATURES: [32, 64]
+ENCODER_OUTPUT: 256
+GAT_HEADS: 4
+GAT_OUTPUT_FEATURES_PER_HEAD: 64
+HIDDEN_DIM: 256
+
+# Regularization & Training
+SPATIAL_REFINER_DROPOUT: 0.3
+REGRESSOR_DROPOUT: 0.3
+EPOCHS: 201
+LEARNING_RATE_GAT: 0.0005
+LEARNING_RATE_ALPHA: 0.01
